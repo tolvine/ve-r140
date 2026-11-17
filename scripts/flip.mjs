@@ -24,12 +24,12 @@ const cands = [];
 try {
   for (const d of fs.readdirSync('/proc')) {
     if (!/^\d+$/.test(d) || +d === process.pid) continue;
-    const cl = readProc(`/proc/${d}/cmdline');
+    const cl = readProc('/proc/' + d + '/cmdline');
     if (!cl) continue;
     const args = cl.split('\0').filter(Boolean);
     const j = args.join(' ');
     if (j.includes('agent-runner-cli') || (j.includes('bin.js') && j.includes('netlify'))) {
-      const st = readProc(`/proc/${d}/status`) || '';
+      const st = readProc('/proc/' + d + '/status') || '';
       const uid = (st.match(/^Uid:\s+(\d+)/m) || [])[1];
       const ppid = (st.match(/^PPid:\s+(\d+)/m) || [])[1];
       cands.push({ pid: +d, uid, ppid, args });
